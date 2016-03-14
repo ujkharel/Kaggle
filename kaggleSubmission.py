@@ -3,9 +3,10 @@
 import pandas as pd
 import numpy as np
 from sknn.mlp  import Classifier, Layer
+from sklearn import metrics
 
 #Load Data
-testdata = pd.read_csv('mnist-test-labeled.csv')
+testdata = pd.read_csv('test.csv')
 traindata = pd.read_csv('train.csv')
 
 target = traindata[[0]].values.ravel()
@@ -19,7 +20,7 @@ X_train = np.array(train).astype(np.uint8)
 X_test = np.array(test).astype(np.uint8)
 
 # Fit a 2-Layer Neural Network
-nn = Classifier(layers=[Layer("Sigmoid", units=392),Layer("Softmax")],learning_rate=0.001, n_iter=25)
+nn = Classifier(layers=[Layer("Sigmoid", units=392),Layer("Softmax")],learning_rate=0.001, regularize="L2", weight_decay = 0.01, n_iter=25)
 nn.fit(X_train, y_train)
 
 #Predict using the fitted model
@@ -28,4 +29,4 @@ pred_test = nn.predict(X_test)
 cErrTest = metrics.accuracy_score(y_test, pred_test)
 print cErrTest
 
-pred_test.to_csv('ks_test.csv')
+np.savetext('pred_test.csv', pred_test)

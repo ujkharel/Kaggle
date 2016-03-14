@@ -1,0 +1,49 @@
+#!/usr/bin/python -tt
+
+import pandas as pd
+import numpy as np
+from sklearn import metrics
+from sklearn import cross_validation
+from sklearn.cross_validation import cross_val_score
+from sklearn import neural_network
+from sknn.mlp  import Classifier, Layer
+import logging
+logging.basicConfig()
+
+testdata = pd.read_csv('test.csv')
+traindata = pd.read_csv('train.csv')
+
+
+target = traindata[[0]].values.ravel()
+target_t = testdata[[0]].values.ravel()
+y_train = target.astype(np.uint8)
+y_test = target_t.astype(np.uint8)
+train = traindata.iloc[:,1:].values
+test = testdata.iloc[:,1:].values
+X_train = np.array(train).astype(np.uint8)
+X_test = np.array(test).astype(np.uint8)
+
+nn2 = Classifier(layers=[Layer("Sigmoid", units=392),Layer("Softmax")],learning_rate=0.001, n_iter=25)
+nn3 = Classifier(layers=[Layer("Linear", units=392), Layer("Sigmoid", units=196),Layer("Softmax")],learning_rate=0.001, n_iter=25)
+
+nn2.fit(X_train, y_train)
+#cErrTrain2 = nn2.score(X_train,y_train)
+#print cErrTrain2
+pred2 = nn2.predict(X_test)
+cErrTest2 = metrics.accuracy_score(y_test, pred2)
+print cErrTest2
+
+nn3.fit(X_train, y_train)
+cErrTrain3 = nn2.score(X_train,y_train)
+print cErrTrain3
+pred3 = nn3.predict(X_test)
+cErrTest3 = metrics.accuracy_score(y_test, pred3)
+print cErrTest3
+
+cv = cross_validation.KFold(len(X_train), n_folds=5)
+
+results2=cross_validation.cross_val_score(nn2, X_train, y_train, cv=cv)
+print results2 
+
+results3=cross_validation.cross_val_score(nn3, X_train, y_train, cv=cv)
+print results3
