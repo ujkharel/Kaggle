@@ -21,7 +21,7 @@ X_train = np.array(train).astype(np.uint8)
 X_test = np.array(test).astype(np.uint8)
 
 # Fit a 2-Layer Neural Network
-nn = Classifier(layers=[Layer("Sigmoid", units=392),Layer("Softmax")],learning_rate=0.001, n_iter=25)
+nn = Classifier(layers=[Layer("Sigmoid", units=392),Layer("Softmax")], regularize="L2", weight_decay = 0.01, learning_rate=0.001, n_iter=25)
 nn.fit(X_train, y_train)
 
 #Predict using the fitted model
